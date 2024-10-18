@@ -12,13 +12,12 @@ class MeetingContainer:
         self.meetings = {}
 
     @staticmethod
-    def _get_sorted_tuple(name1, name2):
-        return tuple(sorted((name1,name2)))
+    def _create_meeting(name1, name2):
+        return Meeting(*tuple(sorted((name1,name2))))
 
     def add(self, name1, name2):
-        t = self._get_sorted_tuple(name1, name2)
-        value = self.meetings.get(t, 0)
-        self.meetings[Meeting(*t)] = value + 1
+        m = self._create_meeting(name1, name2)
+        self.meetings[m] = self.meetings.get(m, 0) + 1
 
     def add_group(self, group: 'list of names'):
         if len(group) < 2:
