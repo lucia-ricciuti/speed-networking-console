@@ -1,51 +1,29 @@
-from meeting import *
+"""
+    The goal of this app is to create groups for a speed networking session.
+"""
 
-GROUP_SIZE = 3
+import argparse
+
+from logic import *
 
 # List of the names of the people to group.
 names = ['Lucia', 'Antonio', 'Mario', 'Sandro', 'Giulia', 'Carlo', 'Benedetta', 'Nicola', 'Roberto']
 
-meeting_container = MeetingContainer()
+if __name__ == '__main__':
+    print("Running Speed Networking")
+    argparser = argparse.ArgumentParser(description=__doc__)
+    argparser.add_argument('-s', '--group-size',
+                           type=int,
+                           default=GROUP_SIZE,
+                           help='Number of names in each group.')
+    args = argparser.parse_args()
+    print(args)
 
-def create_groups(names, meeting_container, GROUP_SIZE):
+    create_groups_func = create_groups(names, args.group_size)
 
-    groups = []
-
-    group = []
-    available_names = names.copy()
-    while len(available_names) > 0:
-        name = available_names[0]
-        # print('Current name is:', name)
-        if len(group) == 0 or len(available_names) <= GROUP_SIZE:
-            group.append(name)
-            available_names.remove(name)
-        else:
-            target_with_max_value = {}
-            for target in available_names:
-                target_with_max_value[target] = \
-                    meeting_container.get_max_value_by_group_and_target(group, target)
-            best_target = min(target_with_max_value, key=target_with_max_value.get)
-            group.append(best_target)
-            available_names.remove(best_target)
-
-        if len(group) == GROUP_SIZE or len(available_names) == 0:
-            # print('Appending group:', group)
-            groups.append(group)
-            meeting_container.add_group(group)
-            group = []
-
-    return groups
-
-groups = create_groups(names, meeting_container, GROUP_SIZE)
-print(groups)
-
-groups = create_groups(names, meeting_container, GROUP_SIZE)
-print(groups)
-
-groups = create_groups(names, meeting_container, GROUP_SIZE)
-print(groups)
-
-groups = create_groups(names, meeting_container, GROUP_SIZE)
-print(groups)
-
-meeting_container.display()
+    for i in range(3):
+        print("\nRound #",i)
+        groups, meeting_container = create_groups_func()
+        print(groups)
+        for e in dict(filter(lambda e: e[1] > 1, meeting_container.meetings.items())).items():
+            print("{0} and {1} have met {2} times".format(e[0].name1, e[0].name2, e[1]))
